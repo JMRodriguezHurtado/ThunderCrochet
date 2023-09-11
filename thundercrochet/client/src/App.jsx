@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
 import {Route, Routes, useLocation, useNavigate} from "react-router-dom";
-import {todosLosProductos} from "./BaseDeDatos";
-import Cards from "./components/Cards.jsx";
+import {todosLosProductos} from "../";
+import Card from "./components/ProductCard.jsx";
 import Nav from "./components/Nav.jsx";
 import About from "./views/About.jsx";
 
