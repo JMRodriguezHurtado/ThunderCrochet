@@ -36,15 +36,12 @@ function App() {
     //eslint-disable-next-line
   }, [access]);
 
-  // nueva API
-  //*https://rym2-production.up.railway.app/api/character/${id}?key=henrym-usuariodegithub
-
   function searchHandler(id) {
     (todosLosProductos).then(({data}) => {
       if (data.name) {
         setProducto((oldProducto) => [...oldProducto, data]);
       } else {
-        window.alert("¡No hay personajes con este ID!");
+        window.alert("No se encontro ese producto");
       }
     });
   }
