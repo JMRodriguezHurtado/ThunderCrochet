@@ -1,0 +1,11 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "crotchet",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "JMRH",
+  "license": "ISC"
+}
