@@ -4,8 +4,33 @@
   "description": "crotchet",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "concurrently \"npm run server\"",
+    "server": "nodemon index.js"
   },
   "author": "JMRH",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@auth0/auth0-react": "github:auth0/auth0-react",
+    "@sendgrid/mail": "^8.1.0",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.0.0",
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "express-jwt": "^8.4.1",
+    "google-auth-library": "^9.6.2",
+    "json-server": "^1.0.0-alpha.23",
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0",
+    "mercadopago": "^2.0.7",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.9",
+    "nodemon": "^3.0.3",
+    "npm-run-all": "^4.1.5",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.36.0"
+  }
 }
