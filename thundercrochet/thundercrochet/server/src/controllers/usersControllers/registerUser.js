@@ -1,21 +1,10 @@
 require("dotenv").config();
 const { User } = require("../db");
-const { Op } = require("sequelize");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const registerTokens = require('../../middlewares/tokens/registerTokens');
+const sendVerifyEmail = require('../../middlewares/email/sendVerifyEmail');
 
 const uuid = require("uuid");
-const nodemailer = require("nodemailer");
-
-const URL = "http://localhost:3030";
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
 
 const registerUser = async (req, res) => {
   const { name, last_name, phone_number, address, email, password } = req.body;
@@ -24,44 +13,45 @@ const registerUser = async (req, res) => {
     throw new Error("Todos los campos son obligatorios.");
   }
 
-  const userExists = await User.findOne({ where: { email } });
-  if (userExists) {
-    throw new Error("Este usuario ya está registrado.");
-  }
-
-  const confirmationToken = uuid.v4();
-
   try {
-    const newUser = await createusers({
+    const userExists = await User.findOne({ where: { email } });
+    if (userExists) {
+      throw new Error("Este usuario ya está registrado.");
+    }
+
+    const confirmationToken = uuid.v4();
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
       name,
       last_name,
       phone_number,
       address,
       email,
-      password,
+      password: hashedPassword,
       confirmationToken,
     });
-    console.log({ newUser });
 
-    const mailOptions = {
-      from: "clickyticketg18pf@gmail.com",
-      to: email,
-      subject: "Confirmación de Correo Electrónico",
-      html: `<p style="font-size: 16px; color: #0074d9;">
-      Para confirmar tu correo electrónico, haz clic <a href="${URL}/ConfirmTokenForm?token=${confirmationToken}" style="text-decoration: none; color: #ff4136; font-weight: bold;">aquí</a>.
-    </p>`,
-    };
+    if (newUser) {
+      const data = {
+        name,
+        message: 'Usuario creado con éxito!'
+      };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.error("Error al enviar el correo:", error);
-      } else {
-        console.log("Email enviado");
+      if (!newUser.verify) {
+        await sendVerifyEmail(newUser.email, newUser._id);
       }
-    });
+
+      const { accessToken, refreshToken } = registerTokens.signTokens(newUser._id);
+
+      return { access: true, accessToken, refreshToken, data };
+    } else {
+      throw new Error("User couldn't be created.");
+    }
   } catch (error) {
-    console.error("Error al registrar al usuario:", error);
-    throw new Error("Error al registrar al usuario.");
+    console.log(error);
+    throw new Error(error.message);
   }
 };
 
